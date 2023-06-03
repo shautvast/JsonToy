@@ -13,50 +13,49 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class Jackson {
-    List<String> trashbin = new ArrayList<String>();
+public class JacksonComparisonTest {
+    private static final int ITERATIONS = 20;
+    private static final int INNERLOOP_COUNT = 100000;
+    List<String> trashbin = new ArrayList<>();
 
     @Test
-    public void jackson() throws JsonProcessingException {
+    public void testPerformance() throws JsonProcessingException {
+        System.out.println("jackson,jsontoy");
         ObjectMapper objectMapper = new ObjectMapper();
         Bean1 bean1 = new Bean1();
         Bean2 bean2 = new Bean2();
         bean1.setData1(UUID.randomUUID().toString());
         bean1.setBean2(bean2);
         bean2.setData2(UUID.randomUUID().toString());
-        String valueAsString = objectMapper.writeValueAsString(bean1);
-        String jsonString = Serializer.toJSONString(bean1);
+        String valueAsString;
+        String jsonString;
 
-        for (int c = 0; c < 20; c++) {
+        for (int c = 0; c < ITERATIONS; c++) {
             trashbin.clear();
-            System.gc();
             long t0 = System.currentTimeMillis();
-            for (int i = 0; i < 100000; i++) {
+            for (int i = 0; i < INNERLOOP_COUNT; i++) {
                 bean1 = new Bean1();
                 bean2 = new Bean2();
                 bean1.setData1(UUID.randomUUID().toString());
                 bean1.setBean2(bean2);
                 bean2.setData2(UUID.randomUUID().toString());
                 valueAsString = objectMapper.writeValueAsString(bean1);
-                // System.out.println(valueAsString);
                 trashbin.add(valueAsString);
             }
-            System.out.print(System.currentTimeMillis() - t0);
+            System.out.printf("% 7d",(System.currentTimeMillis() - t0));
             System.out.print(",");
             trashbin.clear();
-            System.gc();
             long tt0 = System.currentTimeMillis();
-            for (int i = 0; i < 100000; i++) {
+            for (int i = 0; i < INNERLOOP_COUNT; i++) {
                 bean1 = new Bean1();
                 bean2 = new Bean2();
                 bean1.setData1(UUID.randomUUID().toString());
                 bean1.setBean2(bean2);
                 bean2.setData2(UUID.randomUUID().toString());
                 jsonString = Serializer.toJSONString(bean1);
-                // System.out.println(jsonString);
                 trashbin.add(jsonString);
             }
-            System.out.println(System.currentTimeMillis() - tt0);
+            System.out.printf("% 7d%n",System.currentTimeMillis() - tt0);
         }
 
     }

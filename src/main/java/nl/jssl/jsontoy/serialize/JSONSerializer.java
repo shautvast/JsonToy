@@ -11,9 +11,9 @@ public abstract class JSONSerializer<T> {
         if (object == null) {
             return "";
         } else if (object instanceof Number || object instanceof Boolean) {
-            return "" + object.toString();
+            return "" + object;
         } else if (object instanceof CharSequence || object instanceof Character) {
-            return "\"" + object.toString() + "\"";
+            return "\"" + object + "\"";
         } else {
             return handle(object);
         }
