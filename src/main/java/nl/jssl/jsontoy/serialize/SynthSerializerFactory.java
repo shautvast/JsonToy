@@ -58,20 +58,21 @@ class SynthSerializerFactory {
 
     @SuppressWarnings("unchecked")
     <T> JSONSerializer<T> createSerializer(Class<T> beanjavaClass) {
-        if (serializers.containsKey(beanjavaClass)) {
-            return (JSONSerializer<T>) serializers.get(beanjavaClass);
+        JSONSerializer<T> serializer = (JSONSerializer<T>) serializers.get(beanjavaClass);
+        if (serializer != null) {
+            return serializer;
         }
         try {
-            CtClass beanClass = pool.get(beanjavaClass.getName());
-            return tryCreateSerializer(beanjavaClass, beanClass);
+            return tryCreateSerializer(beanjavaClass);
         } catch (NotFoundException | CannotCompileException | InstantiationException | IllegalAccessException |
                  InvocationTargetException | NoSuchMethodException e) {
             throw new SerializerCreationException(e);
         }
     }
 
-    private <T> JSONSerializer<T> tryCreateSerializer(Class<?> javaClass, CtClass beanClass) throws NotFoundException, CannotCompileException, InstantiationException,
+    private <T> JSONSerializer<T> tryCreateSerializer(Class<?> javaClass) throws NotFoundException, CannotCompileException, InstantiationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        CtClass beanClass = pool.get(javaClass.getName());
         CtClass serializerClass = pool.makeClass(createSerializerName(beanClass), serializerBase);
 
         addToJsonStringMethod(beanClass, serializerClass);
