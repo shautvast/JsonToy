@@ -92,13 +92,18 @@ public class MapperFactory extends ClassVisitor {
         }
 
         getterInsnList.add(new VarInsnNode(ALOAD, 1));
-        getterInsnList.add(new LdcInsnNode("\"" + getterMethodName.substring(startIndex).toLowerCase() + "\":"));
+        getterInsnList.add(new LdcInsnNode("\"" + correctName(getterMethodName, startIndex) + "\":"));
         getterInsnList.add(new MethodInsnNode(INVOKEVIRTUAL, STRINGBUILDER, APPEND, APPEND_SIGNATURE));
         getterInsnList.add(new InsnNode(POP));
         getterInsnList.add(new VarInsnNode(ALOAD, 1));
         getterInsnList.add(new VarInsnNode(ALOAD, 3));
         getterInsnList.add(new MethodInsnNode(INVOKEVIRTUAL, classToMap, getterMethodName, "()" + returnType));
         getterInsnList.add(new MethodInsnNode(INVOKESTATIC, MAPPER, "json", "(Ljava/lang/StringBuilder;" + genericReturnType(returnType) + ")V"));
+    }
+
+    private String correctName(String getterMethodName, int startIndex) {
+        String tmp = getterMethodName.substring(startIndex);
+        return tmp.substring(0, 1).toLowerCase() + tmp.substring(1);
     }
 
     private static String genericReturnType(String returnType) {
