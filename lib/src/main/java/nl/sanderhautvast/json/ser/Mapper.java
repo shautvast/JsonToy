@@ -5,6 +5,8 @@ import org.objectweb.asm.ClassWriter;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,16 +19,6 @@ public class Mapper {
     private static final Map<Class<?>, BaseMapper<?>> mappers = new ConcurrentHashMap<>();
 
     private static final ByteClassLoader generatedClassesLoader = new ByteClassLoader();
-    private static final StringMapper stringMapper = new StringMapper();
-    private static final BooleanMapper booleanMapper = new BooleanMapper();
-
-    private static final IntegerMapper integerMapper = new IntegerMapper();
-    private static final LongMapper longMapper = new LongMapper();
-    private static final ShortMapper shortMapper = new ShortMapper();
-    private static final ByteMapper byteMapper = new ByteMapper();
-    private static final CharMapper charMapper = new CharMapper();
-    private static final FloatMapper floatMapper = new FloatMapper();
-    private static final DoubleMapper doubleMapper = new DoubleMapper();
 
 
     /**
@@ -49,7 +41,7 @@ public class Mapper {
         return b.toString();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "UnnecessaryToStringCall"})
     public static void json(StringBuilder b, Object value) {
         if (value == null) {
             b.append("null");
@@ -80,25 +72,26 @@ public class Mapper {
             } else if (value instanceof Map) {
                 object(b, (Map) value);
             } else {
-                if (type.equals(String.class)) {
-                    stringMapper.json(b, (String) value);
-                } else if (type.equals(Boolean.class)) {
-
-                    booleanMapper.json(b, (Boolean) value);
-                } else if (type.equals(Integer.class)) {
-                    integerMapper.json(b, (Integer) value);
-                } else if (type.equals(Long.class)) {
-                    longMapper.json(b, (Long) value);
-                } else if (type.equals(Short.class)) {
-                    shortMapper.json(b, (Short) value);
-                } else if (type.equals(Byte.class)) {
-                    byteMapper.json(b, (Byte) value);
-                } else if (type.equals(Character.class)) {
-                    charMapper.json(b, (Character) value);
-                } else if (type.equals(Float.class)) {
-                    floatMapper.json(b, (Float) value);
-                } else if (type.equals(Double.class)) {
-                    doubleMapper.json(b, (Double) value);
+                if (type == String.class) {
+                    b.append("\"");
+                    Mapper.escape(b, (String) value);
+                    b.append("\"");
+                } else if (type == Character.class) {
+                    b.append("\"");
+                    Mapper.escape(b, (Character) value);
+                    b.append("\"");
+                } else if (type == Boolean.class
+                        || type == Integer.class
+                        || type == Long.class
+                        || type == Float.class
+                        || type == Double.class
+                        || type == UUID.class
+                        || type == Byte.class
+                        || type == Short.class
+                        || type == BigInteger.class
+                        || type == BigDecimal.class
+                ) {
+                    b.append(value.toString()); // prevents another nullcheck
                 } else {
                     BaseMapper mapper = mappers.computeIfAbsent(type, key -> createObjectMapper(type));
                     mapper.json(b, value);
@@ -402,77 +395,5 @@ public class Mapper {
     }
 }
 
-class BooleanMapper extends BaseMapper<Boolean> {
 
-    @Override
-    public void json(StringBuilder b, Boolean value) {
-        b.append(value);
-    }
-}
 
-class ShortMapper extends BaseMapper<Short> {
-
-    @Override
-    public void json(StringBuilder b, Short value) {
-        b.append(value);
-    }
-}
-
-class StringMapper extends BaseMapper<String> {
-    @Override
-    public void json(StringBuilder b, String value) {
-        b.append("\"");
-        Mapper.escape(b, value);
-        b.append("\"");
-    }
-}
-
-class IntegerMapper extends BaseMapper<Integer> {
-
-    @Override
-    public void json(StringBuilder b, Integer value) {
-        b.append(value);
-    }
-}
-
-class LongMapper extends BaseMapper<Long> {
-
-    @Override
-    public void json(StringBuilder b, Long value) {
-        b.append(value);
-    }
-}
-
-class ByteMapper extends BaseMapper<Byte> {
-
-    @Override
-    protected void json(StringBuilder b, Byte value) {
-        b.append(value);
-    }
-}
-
-class CharMapper extends BaseMapper<Character> {
-
-    @Override
-    protected void json(StringBuilder b, Character value) {
-        b.append("\"");
-        Mapper.escape(b, value);
-        b.append("\"");
-    }
-}
-
-class FloatMapper extends BaseMapper<Float> {
-
-    @Override
-    protected void json(StringBuilder b, Float value) {
-        b.append(value);
-    }
-}
-
-class DoubleMapper extends BaseMapper<Double> {
-
-    @Override
-    protected void json(StringBuilder b, Double value) {
-        b.append(value);
-    }
-}

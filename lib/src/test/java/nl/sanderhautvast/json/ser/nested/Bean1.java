@@ -1,16 +1,18 @@
 package nl.sanderhautvast.json.ser.nested;
 
 
+import java.util.UUID;
+
 @SuppressWarnings("unused")
 public class Bean1 {
-    private String data1;
+    private UUID data1;
     private Bean2 bean2;
 
-    public String getData1() {
+    public UUID getData1() {
         return data1;
     }
 
-    public void setData1(String data1) {
+    public void setData1(UUID data1) {
         this.data1 = data1;
     }
 

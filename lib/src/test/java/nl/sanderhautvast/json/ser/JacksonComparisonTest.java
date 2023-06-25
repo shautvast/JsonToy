@@ -22,7 +22,7 @@ public class JacksonComparisonTest {
         ObjectMapper objectMapper = new ObjectMapper();
         Bean1 bean1 = new Bean1();
         Bean2 bean2 = new Bean2();
-        bean1.setData1(UUID.randomUUID().toString());
+        bean1.setData1(UUID.randomUUID());
         bean1.setBean2(bean2);
         bean2.setData2(UUID.randomUUID().toString());
         String valueAsString;
@@ -34,7 +34,7 @@ public class JacksonComparisonTest {
             for (int i = 0; i < INNERLOOP_COUNT; i++) {
                 bean1 = new Bean1();
                 bean2 = new Bean2();
-                bean1.setData1(UUID.randomUUID().toString());
+                bean1.setData1(UUID.randomUUID());
                 bean1.setBean2(bean2);
                 bean2.setData2(UUID.randomUUID().toString());
                 valueAsString = objectMapper.writeValueAsString(bean1);
@@ -47,7 +47,7 @@ public class JacksonComparisonTest {
             for (int i = 0; i < INNERLOOP_COUNT; i++) {
                 bean1 = new Bean1();
                 bean2 = new Bean2();
-                bean1.setData1(UUID.randomUUID().toString());
+                bean1.setData1(UUID.randomUUID());
                 bean1.setBean2(bean2);
                 bean2.setData2(UUID.randomUUID().toString());
                 jsonString = Mapper.json(bean1);
