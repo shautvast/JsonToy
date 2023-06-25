@@ -23,6 +23,7 @@ public class CharPropertyTest {
         assertEquals("{\"data\":\"a\"}", Mapper.json(object));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         private char data;
 

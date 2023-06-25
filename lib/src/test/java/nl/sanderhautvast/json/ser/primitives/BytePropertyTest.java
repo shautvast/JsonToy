@@ -23,6 +23,7 @@ public class BytePropertyTest {
         assertEquals("{\"data\":1}", Mapper.json(object));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         private byte data;
 

@@ -23,6 +23,7 @@ public class FloatPropertyTest {
         assertEquals("{\"data\":1.0}", Mapper.json(object));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         private float data;
 

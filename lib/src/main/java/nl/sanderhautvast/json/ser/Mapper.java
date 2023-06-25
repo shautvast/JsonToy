@@ -31,6 +31,7 @@ public class Mapper {
      * @param type   The class to serialize to json
      * @param mapper the Mapper implementation
      */
+    @SuppressWarnings("unused")
     public static <T> void addMapper(Class<T> type, BaseMapper<T> mapper) {
         mappers.put(type, mapper);
     }

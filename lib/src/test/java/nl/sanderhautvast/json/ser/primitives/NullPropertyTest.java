@@ -13,6 +13,7 @@ public class NullPropertyTest {
         assertEquals("{\"data\":null}", Mapper.json(object));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         private String data;
 

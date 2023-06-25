@@ -24,6 +24,7 @@ public class IntPropertyTest {
         assertEquals("{\"data\":1}", Mapper.json(object));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         int data;
 

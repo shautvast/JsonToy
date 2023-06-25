@@ -30,6 +30,7 @@ public class SetTest {
                 || "{\"set\":[\"value1\",\"value2\"]}".equals(jsonString));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         private Set<String> set;
 

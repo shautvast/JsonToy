@@ -23,6 +23,7 @@ public class LongPropertyTest {
         assertEquals("{\"data\":1}", Mapper.json(object));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         private long data;
 

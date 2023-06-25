@@ -24,6 +24,7 @@ public class BooleanPropertyTest {
         assertEquals("{\"data\":true}", Mapper.json(object));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         boolean data;
 
