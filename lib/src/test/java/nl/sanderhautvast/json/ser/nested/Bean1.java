@@ -1,7 +1,7 @@
 package nl.sanderhautvast.json.ser.nested;
 
 
-
+@SuppressWarnings("unused")
 public class Bean1 {
     private String data1;
     private Bean2 bean2;

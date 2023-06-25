@@ -27,6 +27,7 @@ public class ListTest {
         assertEquals("{\"list\":[\"value1\",\"value2\"]}", Mapper.json((object)));
     }
 
+    @SuppressWarnings("unused")
     public static class Bean {
         private List<String> list;
 

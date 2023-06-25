@@ -3,7 +3,8 @@ package nl.sanderhautvast.json.ser;
 
 import nl.sanderhautvast.json.ser.nested.Bean1;
 
-public class ExampleMapper extends BaseMapper{
+@SuppressWarnings("unused")
+public class ExampleMapper extends BaseMapper<Object>{
     @Override
     protected void json(StringBuilder b, Object o) {
         Bean1 value = (Bean1)o;

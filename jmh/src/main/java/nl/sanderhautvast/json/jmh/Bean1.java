@@ -1,5 +1,6 @@
 package nl.sanderhautvast.json.jmh;
 
+@SuppressWarnings("unused")
 public class Bean1 {
     private String data1;
     private Bean2 bean2;

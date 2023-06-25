@@ -5,6 +5,7 @@ package nl.sanderhautvast.json.ser.nested;
 public class Bean2 {
     private String data2;
 
+    @SuppressWarnings("unused")
     public String getData2() {
         return data2;
     }
