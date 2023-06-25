@@ -80,7 +80,7 @@ public class Mapper {
                     b.append("\"");
                     Mapper.escape(b, (Character) value);
                     b.append("\"");
-                } else if (type == UUID.class) {
+                } else if (type == UUID.class || type.isEnum()) {
                     b.append("\"");
                     b.append(value.toString());
                     b.append("\"");
