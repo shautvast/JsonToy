@@ -9,6 +9,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+/**
+ * Mapper.json(StringBuilder b, ...)
+ * TODO write to outputstream
+ */
 public class Mapper {
     private static final Map<Class<?>, BaseMapper<?>> mappers = new ConcurrentHashMap<>();
 
