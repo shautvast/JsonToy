@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -82,7 +81,7 @@ public class Mapper {
                     b.append("\"");
                     Mapper.escape(b, (Character) value);
                     b.append("\"");
-                } else if (type == UUID.class || type == LocalDate.class || type == LocalDateTime.class || type.isEnum()) {
+                } else if (type == UUID.class || value instanceof Temporal || type.isEnum()) {
                     b.append("\"");
                     b.append(value.toString());
                     b.append("\"");

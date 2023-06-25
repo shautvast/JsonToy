@@ -5,12 +5,12 @@
     <parent>
         <groupId>nl.sander</groupId>
         <artifactId>jsonthingy-pom</artifactId>
-        <version>1.5</version>
+        <version>1.6</version>
     </parent>
 
     <name>JsonToy</name>
     <artifactId>jsonthingy</artifactId>
-    <version>1.5</version>
+    <version>1.6</version>
     <packaging>jar</packaging>
 
     <properties>
