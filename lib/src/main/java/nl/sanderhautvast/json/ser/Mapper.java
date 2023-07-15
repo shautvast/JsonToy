@@ -4,6 +4,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,6 +21,15 @@ public class Mapper {
     private static final Map<Class<?>, BaseMapper<?>> mappers = new ConcurrentHashMap<>();
 
     private static final ByteClassLoader generatedClassesLoader = new ByteClassLoader();
+    public static final char[] TAB = {'\\', 't'};
+    public static final char[] DOUBLEQUOTE = {'\\', '\"'};
+    public static final char[] SLASH = {'\\', '/'};
+    public static final char[] RETURN = {'\\', 'r'};
+    public static final char[] BACKSLASH = {'\\', '\\'};
+    public static final char[] NEWLINE = {'\\', 'n'};
+    public static final char[] BELL = {'\\', 'b'};
+    public static final char[] FORMFEED = {'\\', 'f'};
+    private static final char[][] MAP = createEscapeMap();
 
 
     /**
@@ -49,25 +59,7 @@ public class Mapper {
         } else {
             Class<?> type = value.getClass();
             if (type.isArray()) {
-                if (value instanceof byte[]) {
-                    array(b, (byte[]) value);
-                } else if (value instanceof int[]) {
-                    array(b, (int[]) value);
-                } else if (value instanceof short[]) {
-                    array(b, (short[]) value);
-                } else if (value instanceof boolean[]) {
-                    array(b, (boolean[]) value);
-                } else if (value instanceof char[]) {
-                    array(b, (char[]) value);
-                } else if (value instanceof long[]) {
-                    array(b, (long[]) value);
-                } else if (value instanceof float[]) {
-                    array(b, (float[]) value);
-                } else if (value instanceof double[]) {
-                    array(b, (double[]) value);
-                } else {
-                    array(b, (Object[]) value);
-                }
+                array(b, value);
             } else if (value instanceof Collection) {
                 list(b, (Collection) value);
             } else if (value instanceof Map) {
@@ -104,140 +96,16 @@ public class Mapper {
         }
     }
 
-    private static void array(StringBuilder b, Object[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            Object first = array[0];
-            b.append("[");
-            Mapper.json(b, first);
-            Arrays.stream(array).skip(1)
-                    .forEach(element -> {
-                        b.append(",");
-                        Mapper.json(b, element);
-                    });
-            b.append("]");
+    //TODO make this more performant
+    private static void array(StringBuilder b, Object value) {
+        b.append("[");
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = 0; i < Array.getLength(value); i++) {
+            Object arrayElement = Array.get(value, i);
+            joiner.add(Mapper.json(arrayElement)); // recursie
         }
-    }
-
-    private static void array(StringBuilder b, byte[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            byte first = array[0];
-            b.append("[");
-            json(b, first);
-            for (int i = 1; i < array.length; i++) {
-                b.append(",");
-                json(b, array[i]);
-            }
-            b.append("]");
-        }
-    }
-
-    private static void array(StringBuilder b, short[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            short first = array[0];
-            b.append("[");
-            json(b, first);
-            for (int i = 1; i < array.length; i++) {
-                b.append(",");
-                json(b, array[i]);
-            }
-            b.append("]");
-        }
-    }
-
-    private static void array(StringBuilder b, long[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            long first = array[0];
-            b.append("[");
-            json(b, first);
-            for (int i = 1; i < array.length; i++) {
-                b.append(",");
-                json(b, array[i]);
-            }
-            b.append("]");
-        }
-    }
-
-    private static void array(StringBuilder b, boolean[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            boolean first = array[0];
-            b.append("[");
-            json(b, first);
-            for (int i = 1; i < array.length; i++) {
-                b.append(",");
-                json(b, array[i]);
-            }
-            b.append("]");
-        }
-    }
-
-    private static void array(StringBuilder b, double[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            double first = array[0];
-            b.append("[");
-            json(b, first);
-            for (int i = 1; i < array.length; i++) {
-                b.append(",");
-                json(b, array[i]);
-            }
-            b.append("]");
-        }
-    }
-
-    private static void array(StringBuilder b, char[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            char first = array[0];
-            b.append("[");
-            json(b, first);
-            for (int i = 1; i < array.length; i++) {
-                b.append(",");
-                json(b, array[i]);
-            }
-            b.append("]");
-        }
-    }
-
-    private static void array(StringBuilder b, float[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            float first = array[0];
-            b.append("[");
-            json(b, first);
-            for (int i = 1; i < array.length; i++) {
-                b.append(",");
-                json(b, array[i]);
-            }
-            b.append("]");
-        }
-    }
-
-    private static void array(StringBuilder b, int[] array) {
-        if (array.length == 0) {
-            b.append("[]");
-        } else {
-            int first = array[0];
-            b.append("[");
-            json(b, first);
-            for (int i = 1; i < array.length; i++) {
-                b.append(",");
-                json(b, array[i]);
-            }
-            b.append("]");
-        }
+        b.append(joiner);
+        b.append("]");
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -342,61 +210,63 @@ public class Mapper {
         escape(b, String.valueOf(c));
     }
 
-    static void escape(StringBuilder b, String value) {
-        int offset = b.length();
-        b.append(value);
-        int i = offset;
-        while (i < b.length()) {
-            char c = b.charAt(i);
-            switch (c) {
-                case '\t':
-                    b.replace(i, i + 1, "\\");
-                    b.insert(i + 1, "t");
-                    break;
-                case '\"':
-                    b.replace(i, i + 1, "\\");
-                    b.insert(++i, "\"");
-                    break;
-                case '/':
-                    b.replace(i, i + 1, "\\");
-                    b.insert(++i, "/");
-                    break;
-                case '\r':
-                    b.replace(i, i + 1, "\\");
-                    b.insert(++i, "r");
-                    break;
-                case '\n':
-                    b.replace(i, i + 1, "\\");
-                    b.insert(++i, "n");
-                    break;
-                case '\b':
-                    b.replace(i, i + 1, "\\");
-                    b.insert(++i, "b");
-                    break;
-                case '\f':
-                    b.replace(i, i + 1, "\\");
-                    b.insert(++i, "f");
-                    break;
-                case '\\':
-                    b.replace(i, i + 1, "\\");
-                    b.insert(++i, "\\");
-                    break;
-                case '\'':
-                    break;
-                default:
-                    if ((c <= '\u001F') || (c >= '\u007F' && c <= '\u009F') || (c >= '\u2000' && c <= '\u20FF')) {
-                        String ss = Integer.toHexString(c);
-                        b.replace(i, i + 1, "\\");
-                        b.insert(++i, "u");
-                        for (int k = 0; k < 4 - ss.length(); k++) {
-                            b.insert(++i, '0');
-                        }
-                        b.insert(++i, ss.toUpperCase());
-                    }
+    private static char[][] createEscapeMap() {
+        char[][] charmap = new char[0x2100][];
+        for (int i = 0; i < 0x2100; i++) {
+            char c = (char) i;
+            char[] replacement;
+            if (c == '\t') {
+                replacement = TAB;
+            } else if (c == '\"') {
+                replacement = DOUBLEQUOTE;
+            } else if (c == '/') {
+                replacement = SLASH;
+            } else if (c == '\r') {
+                replacement = RETURN;
+            } else if (c == '\\') {
+                replacement = BACKSLASH;
+            } else if (c == '\n') {
+                replacement = NEWLINE;
+            } else if (c == '\b') {
+                replacement = BELL;
+            } else if (c == '\f') {
+                replacement = FORMFEED;
+            } else if ((c <= '\u001F') || (c >= '\u007F' && c <= '\u009F') || (c >= '\u2000')) {
+                replacement = new char[6];
+                replacement[0] = '\\';
+                replacement[1] = 'u';
+
+                String hex = Integer.toHexString(c).toUpperCase();
+                int hexlen = hex.length();
+                for (int k = 0; k < 4 - hexlen; k++) {
+                    replacement[k + 2] = '0';
+                }
+                for (int k = 0; k < hexlen; k++) {
+                    replacement[6 - hexlen + k] = hex.charAt(k);
+                }
+            } else {
+                replacement = new char[]{c};
             }
-            i++;
+            charmap[i] = replacement;
+        }
+
+        return charmap;
+    }
+
+    //both methods are equally slow it seems
+    //mainly because we can't do a batch copy into the stringbuilder and have to map every character individually
+    static void escape(StringBuilder b, String value) {
+        for (int i = 0; i < value.length(); i++) {
+            int c = value.charAt(i);
+
+            if (c < 0x2100) {
+                b.append(MAP[c]);
+            } else {
+                b.append((char) c);
+            }
         }
     }
+
 }
 
 

@@ -8,14 +8,14 @@ import org.openjdk.jmh.annotations.*;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-@State(Scope.Thread)
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.NANOSECONDS)
+//@State(Scope.Thread)
+//@BenchmarkMode(Mode.AverageTime)
+//@OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class Benchmarks {
 
     private static final int ITERATIONS = 10;
 
-    @Benchmark
+//    @Benchmark
     public void testJson() {
         Bean1 bean1;
         Bean2 bean2;
@@ -30,7 +30,7 @@ public class Benchmarks {
         }
     }
 
-    @Benchmark
+//    @Benchmark
     public void testJackson() throws JsonProcessingException {
         Bean1 bean1;
         Bean2 bean2;
